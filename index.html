@@ -47,13 +47,6 @@
             <div class="skill-col">
                 <div class="d-flex skill-box">
                     <label>
-                        Nome do Personagem
-                        <input type="text" class="skill-char">
-                        <small>Observação: Deve ser exatamente igual ao nome do token</small>
-                    </label>
-                </div>
-                <div class="d-flex skill-box">
-                    <label>
                         Nome da Habilidade
                         <input type="text" class="skill-name">
                     </label>
@@ -83,17 +76,17 @@
             <div class="skill-col">
                 <div class="skill-box d-flex d-nowrap">
                     <div class="skill-options medium">
-                        <label>Habilidades Básicas</label>
+                        <label>Básicas</label>
                     </div>
                 </div>
                 <div class="skill-box d-flex d-nowrap">
                     <div class="skill-options elemento">
-                        <label>Matérias Elementais</label>
+                        <label>Magias</label>
                     </div>
                 </div>
                 <div class="skill-box d-flex d-nowrap">
                     <div class="skill-options acoes">
-                        <label>Modificadores de Ação</label>
+                        <label>Modificadores</label>
                     </div>
                 </div>
                                 <!--
@@ -127,7 +120,7 @@
 
     <script>
         const classes = {
-            medium: ['movimentar', 'defesa', 'ataque', 'curar', 'energia', 'empurrar', 'puxar'],
+            medium: ['movimentar', 'defesa', 'ataque', 'curar', 'empurrar'],
             elemento: ['agua','vento','terra','fogo','raio'],
             acoes: ['reagir','aliado','desvincular','expandir']
             /*
@@ -178,15 +171,19 @@
         function genMacro(char, skill_name = '?', all_actions = [] ){
             let macro = ['&{template:shamanking} {{name='+char+' - '+skill_name+'}} {{[img]('+window.location.href+'img/alcance.png)=Seu alcance é de [[@{selected|tal}]] casa(s)}}'];
             let cost = 0;
+            let has_atk = false;
+            let index = 0;
 
             if (all_actions.length > 0){
-
-                let index = 0;
 
                 all_actions.forEach(function(action){
                     const sync = false;
 
                     let generated = genAction(index, char, action, sync);
+
+                    if (['ataque','agua','fogo','terra','vento','raio','gelo','luz','trevas'].indexOf(action) > -1){
+                        has_atk = true;
+                    }
 
                     if (generated[0]){
                         macro.push(generated[0]);
@@ -195,6 +192,10 @@
                         index++;
                     }
                 });
+            }
+
+            if (has_atk){
+                macro.push(genAction(index, char, 'dadoataque', false)[0])
             }
 
             macro = macro.join(' ');
@@ -213,7 +214,7 @@
                 skill_actions.push(jQuery(this).attr('data-action'));
             });
 
-            const macro = genMacro(jQuery('.skill-char').val(), jQuery('.skill-name').val(), skill_actions);
+            const macro = genMacro('@{selected|character_name}', jQuery('.skill-name').val(), skill_actions);
 
             jQuery('.skill-macro').val(macro[0]);
 
