@@ -172,6 +172,7 @@
             let macro = ['&{template:shamanking} {{name='+char+' - '+skill_name+'}} {{[img]('+window.location.href+'img/alcance.png)=Seu alcance é de [[@{selected|tal}]] casa(s)}}'];
             let cost = 0;
             let has_atk = false;
+            let spell_count = 0;
             let index = 0;
 
             if (all_actions.length > 0){
@@ -185,6 +186,10 @@
                         has_atk = true;
                     }
 
+                    if (['agua','fogo','terra','vento','raio','gelo','luz','trevas'].indexOf(action) > -1){
+                        spell_count++;
+                    }
+
                     if (generated[0]){
                         macro.push(generated[0]);
                         cost += generated[1];
@@ -196,6 +201,10 @@
 
             if (has_atk){
                 macro.push(genAction(index, char, 'dadoataque', false)[0])
+            }
+
+            if (spell_count > 0){
+                cost += spell_count;
             }
 
             macro = macro.join(' ');
