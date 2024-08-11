@@ -203,17 +203,13 @@
                 macro.push(genAction(index, char, 'dadoataque', false)[0])
             }
 
-            if (spell_count > 0){
-                cost += spell_count;
-            }
-
             macro = macro.join(' ');
 
             if (jQuery('.skill-image').val().trim().length > 0){
                 macro += "{{imagem=[img]("+jQuery('.skill-image').val().trim()+")}}";
             }
 
-            return [macro, cost];
+            return [macro, cost, spell_count];
         }
 
         function renderSkill(){
@@ -237,6 +233,10 @@
                 default: custo_real = '?';
             }
 
+            if (!is_NaN(parseInt(custo_real))){
+                custo_real += macro[2];
+            }
+            
             jQuery('.skill-cost').text(custo_real + ' PO');
         }
 
